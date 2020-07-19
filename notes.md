@@ -143,6 +143,16 @@ We use ```data-testid``` to target elements  for our tests. Much of the test syn
    });
 ```
 
+---
 
+## 5. Testing for Specific Text Content
 
+The example above verifies whether a specific string is rendered by the component. This has diverse applications. 
+
+-It can verify whether a correct prop is passed into a component by providing mock props and seeing if they appear in the render.
+-It can verify whether a function in a component generates and provides a correct output to a rendered element.
+
+I'll add more examples here as they come to mind.
+
+---
 
