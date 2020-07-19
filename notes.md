@@ -107,4 +107,42 @@ exports[`Take a snapshot should take a snapshot 1`] = `
 - Pass Meaning: The render is identical to the screenshot.
 - Fail Meaning: The render doesn't match the screenshot. This may or may not be a problem, as updating a component may cause a change to the render. The tester will need to compare the screenshot to the render and decide on whether to update the screenshot or not. ```test``` provides a comparison of the two in the console.
 
+---
+
+## 4. Testing DOM Elements
+
+When writing react components, we can include the parameter ```data-testid``` in any rendered HTML element. This special parameter is used specifically to allow our testing suite to verify whether these components are rendered during tests. They're used like ```id``` or ```class```, except that they're used specifically for testing.
+
+There's an example in TestElements.js. It looks like this. Pay particular attention to the ```data-testid``` parameters.
+
+```
+import React from 'react'
+
+const TestElements = () => {
+ const [counter, setCounter] = React.useState(0)
+  
+ return (
+  <>
+    <h1 data-testid="counter">{ counter }</h1>
+    <button data-testid="button-up" onClick={() => setCounter(counter + 1)}> Up</button>
+    <button disabled data-testid="button-down" onClick={() => setCounter(counter - 1)}>Down</button>
+ </>
+    )
+  }
+  
+export default TestElements
+```
+
+We use ```data-testid``` to target elements  for our tests. Much of the test syntax is like that of the snapshot test, but there are a few differences.
+
+```
+  it('should equal to 0', () => {                              
+    const { getByTestId } = render(<TestElements />);       < the "getByTestId" method is extracted from render by destructuring
+    expect(getByTestId('counter')).toHaveTextContent(0)     < We target the element with testid 'counter', then apply the       
+                                                              ".toHaveTextContent" method to it to see if it contains a specific string.
+   });
+```
+
+
+
 
