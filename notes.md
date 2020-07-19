@@ -21,16 +21,13 @@ Before we look at writing tests, we need to set up a directory for the test scri
     - the test file would be called ```app.test.js```
 - Distinct test files should be written for each component, for clarity and ease of use.
 
-
-
 Once our tests are written, we need to run them.
-To do this open a console and navigate to the react app's 
-
-
+To do this open a console and navigate to the react app's root directory. Then run ```npm test``` (if using npm and assuming jest is installed).
+The results of the test will be shown in the console along with a handy menu of useful test commands.
 
 ---
 
-## 1. Basics
+## 2. Basic Syntax
 
 ### ```it``` or ```test```
 - Describes the test itself
@@ -68,11 +65,10 @@ import App from './App'
                                                         "asFragment(<App/>)" is compared to a saves snapshot using the ".toMatchSnapshot()" method. 
    })
 });
-
 ```
+---
 
-
-## 2. Screenshot Testing
+## 3. Screenshot Testing
 
 The example above was a screenshot test.
 
