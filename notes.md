@@ -70,7 +70,7 @@ import App from './App'
 
 ## 3. Screenshot Testing
 
-The example above was a screenshot test.
+The example above was a screenshot test. Screenshot tests show if a component's render output has *changed* since the last time a snapshot was taken and saved.
 
 ```
 import React from 'react'
@@ -84,7 +84,13 @@ import App from './App'
 });
 ```
 
-The screnshot itself is saved in the ```__snapshots__``` directory of your React app, which is automatically created when a snapshot test is first run. The snapshot's structure informs the tester of the component's structure. Here's a mock snapshot for a simple component that just returns a div containing a h1.
+When a screenshot test is run for the first time it saves a 'screenshot' of the rendered component's structure.
+Subsequently when the test is run it compares the rendered component's current structure to that screnshot, and alerts the tester if differences exist.
+The tester can then decide whether to 'fix' the change or accept the change and update the snapshot for future tests.
+
+The screnshot itself is saved in the ```__snapshots__``` directory of your React app, which is automatically created when a snapshot test is first run in the react app. 
+
+The snapshot's structure informs the tester of the component's structure. Here's a mock snapshot for a simple component that just returns a div containing a h1.
 
 ```
 exports[`Take a snapshot should take a snapshot 1`] = `
@@ -95,6 +101,8 @@ exports[`Take a snapshot should take a snapshot 1`] = `
 </DocumentFragment>
 `;
 ```
+
+### <font color="orange">*-ALWAYS- check the structure of your snapshots when they are created or updated to ensure they are as they should be, or you may get false positives when testing!*</font>
 
 - Pass Meaning: The render is identical to the screenshot.
 - Fail Meaning: The render doesn't match the screenshot. This may or may not be a problem, as updating a component may cause a change to the render. The tester will need to compare the screenshot to the render and decide on whether to update the screenshot or not. ```test``` provides a comparison of the two in the console.
