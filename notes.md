@@ -111,8 +111,11 @@ exports[`Take a snapshot should take a snapshot 1`] = `
 
 ---
 
-## 4. Testing DOM Elements
+## 4. Testing the Presence of DOM Elements
 
+When testing DOM elements we need to be able to select them from whthin the rendered components. There are a few ways to do this.
+
+### Example 1: selectByTestId
 When writing react components, we can include the parameter ```data-testid``` in any rendered HTML element. This special parameter is used specifically to allow our testing suite to verify whether these components are rendered during tests. They're used like ```id``` or ```class```, except that they're used specifically for testing.
 
 There's an example in TestElements.js. It looks like this. Pay particular attention to the ```data-testid``` parameters.
@@ -145,20 +148,55 @@ We use ```data-testid``` to target elements  for our tests. Much of the test syn
    });
 ```
 
----
+### Example 2: getByText
 
-## 5. Testing for Specific Text Content
+This method is much like getByTestId, but it targets an element on the basis of the string it contains as a child.
 
-The example above verifies whether a specific string is rendered by the component. This has diverse applications. 
+Here's a super simple example.
+
+Component:
+
+```
+const SayHello = () => {
+  return (
+    <>
+      <h1>Hello there!</h1>
+    </>
+  )
+}
+  
+export default SayHello
+```
+
+Test:
+
+```
+  it('should render the text "Hello there!", () => {                              
+    const { getByText } = render(<SayHello />);               < the "getByTexy" method is extracted from render by destructuring
+    expect(getByText('Hello there!')).toBeInTheDocument()     < We target the element containing the text 'Hello there!', then apply the       
+                                                              ".tobeInTheDocument" method to it to see if it exists within the render.
+   });
+```
+
+getByText has diverse applications. 
 
 -It can verify whether a correct prop is passed into a component by providing mock props and seeing if they appear in the render.
--It can verify whether a function in a component generates and provides a correct output to a rendered element.
+-It can verufy whether a component processes data into a specific string format correctly.
 
 I'll add more examples here as they come to mind.
 
 ---
 
-## 6. Testing Events
+## 5. Testing Events & their Outcomes
+
+The ```fireEvent``` method is used in tests to implement an event on a specified rendered element.
+
+```
+fireEvent.click(getByTestId('button-a'))
+```
+
+```fireEvent``` is followed by an event.
+
 
 
 
