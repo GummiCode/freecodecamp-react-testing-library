@@ -1,13 +1,28 @@
 # Notes: react-testing-library
 
 
-## 0. Intro
+## Intro
 
 These notes are intended as a reference for personal use while I learn to better use react-testing-library.
 The repo these notes sit within is a clone of a training repository provided by Ibrahima Ndaw at freecodecamp.
 https://www.freecodecamp.org/news/8-simple-steps-to-start-testing-react-apps-using-react-testing-library-and-jest/
 
 NB: I'm using jest. As such I won't use a manually entered ```afterEach(cleanup)``` in my tests. The guide linked above explains what this means.
+
+---
+
+## 0. What are we testing?
+
+__react-testing-library__ is designed to test how React apps work in the DOM. These tests target DOM elements and events, because these things reflect the user's experience. 
+
+For example, a user does not care if an addition function within a React app's component gives a value of 5 when passed the values 2 and 3.
+However the user *will* care if a calculator app gives a wrong result.
+These tests are designed to simulate user interactions, so rather than checking this hypothetical function's behaviour we would test that specific inputs via DOM elements like buttons and text fields lead to  the DOM presenting the right output in the right place.
+
+We don't check that function X works directly;
+We check that the process that function X is a part of works in terms of user interaction and service.
+
+This allows us to write fewer tests while effectively verifying that our app functions correctly. 
 
 ---
 
@@ -192,12 +207,49 @@ I'll add more examples here as they come to mind.
 The ```fireEvent``` method is used in tests to implement an event on a specified rendered element.
 
 ```
-fireEvent.click(getByTestId('button-a'))
+fireEvent.click(getByTestId('button-a'))              < in this example fireEvent 'clicks' the element with testID 'button-a'
 ```
 
-```fireEvent``` is followed by an event.
+We can then test the state of the component after the event has been invoked. Here's an example.
 
+### Component:
 
+```
+const Counter = () => {
+
+  const [counter, setCounter] = React.useState(0)
+  
+  return (
+    <>
+      <button onClick={() => setCounter(counter + 1)}>Press to count!</button>    < This element is a button.
+                                                                                    When clicked it increments the value of ```counter``` state by 1.
+      <h1 data-testid="counter">Current value: {counter}</h1>                     < This ```h1``` displays the current value of ```counter```.
+    </h1>
+  )
+}
+```
+This component consists of a button which, when clicked, increases the value stored in state ```counter``` by 1.
+
+### Test:
+
+This test verifies that the initial value of ```h1``` is 0;
+and that clicking the button causes the  ```h1``` to have an output of ```1```.
+
+```
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react';
+import TestEvents from './TestEvents'
+
+it('increments counter', () => {
+    const { getByTestId } = render(<Counter />); 
+
+    expect(getByTestId('counter')).toHaveTextContent('1')
+    
+    fireEvent.click(getByTestId('counter'))
+
+    expect(getByTestId('counter')).toHaveTextContent('1')
+  });
+```
 
 
 
