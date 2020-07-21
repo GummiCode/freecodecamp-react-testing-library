@@ -130,10 +130,14 @@ exports[`Take a snapshot should take a snapshot 1`] = `
 
 When testing DOM elements we need to be able to select them from whthin the rendered components. There are a few ways to do this.
 
+<br />
+
 ### Example 1: selectByTestId
 When writing react components, we can include the parameter ```data-testid``` in any rendered HTML element. This special parameter is used specifically to allow our testing suite to verify whether these components are rendered during tests. They're used like ```id``` or ```class```, except that they're used specifically for testing.
 
 There's an example in TestElements.js. It looks like this. Pay particular attention to the ```data-testid``` parameters.
+
+### <font color="2d93ad">Component:</font>
 
 ```
 import React from 'react'
@@ -153,7 +157,9 @@ const TestElements = () => {
 export default TestElements
 ```
 
-We use ```data-testid``` to target elements  for our tests. Much of the test syntax is like that of the snapshot test, but there are a few differences.
+### <font color="4e4c67">Test:</font>
+
+We use ```data-testid``` to target elements for our tests. Much of the test syntax is like that of the snapshot test, but there are a few differences.
 
 ```
   it('should equal to 0', () => {                              
@@ -162,6 +168,8 @@ We use ```data-testid``` to target elements  for our tests. Much of the test syn
                                                               ".toHaveTextContent" method to it to see if it contains a specific string.
    });
 ```
+  
+<br />
 
 ### Example 2: getByText
 
@@ -169,7 +177,7 @@ This method is much like getByTestId, but it targets an element on the basis of 
 
 Here's a super simple example.
 
-Component:
+### <font color="2d93ad">Component:</font>
 
 ```
 const SayHello = () => {
@@ -183,7 +191,7 @@ const SayHello = () => {
 export default SayHello
 ```
 
-Test:
+### <font color="4e4c67">Test:</font>
 
 ```
   it('should render the text "Hello there!", () => {                              
@@ -204,6 +212,8 @@ I'll add more examples here as they come to mind.
 
 ## 5. Testing Events & their Outcomes
 
+### Part 1: Testing Events
+
 The ```fireEvent``` method is used in tests to implement an event on a specified rendered element.
 
 ```
@@ -212,7 +222,7 @@ fireEvent.click(getByTestId('button-a'))              < in this example fireEven
 
 We can then test the state of the component after the event has been invoked. Here's an example.
 
-### Component:
+### <font color="2d93ad">Component:</font>
 
 ```
 const Counter = () => {
@@ -230,7 +240,7 @@ const Counter = () => {
 ```
 This component consists of a button which, when clicked, increases the value stored in state ```counter``` by 1.
 
-### Test:
+### <font color="4e4c67">Test:</font>
 
 This test verifies that the initial value of ```h1``` is 0;
 and that clicking the button causes the  ```h1``` to have an output of ```1```.
@@ -251,6 +261,90 @@ it('increments counter', () => {
   });
 ```
 
+<br />
+
+### Part 2: Specifying Event Outcomes using Matchers
+
+Once the event has been triggered we need to verify that the outcome is what we expect. We use __matchers__ for this.
+
+A summary list of matchers for DOM elements can be found here: https://github.com/testing-library/jest-dom
+
+(For reference, a list of 'normal' jest matchers can e found here: https://jestjs.io/docs/en/expect.html)
+
+Here are some matchers I've found particularly useful.
+
+- ```.toHaveAttribute```: Checks whether the given element has a specific attribute. Can also check the attribute's value.
+
+```
+expect(NameInput).toHaveAttribute("type", "text")
 
 
+expect(EmailButton).toHaveAttribute("href", "mock@email.com")
+ ```
+
+---
+
+## 6. Testing Asynchronous Events
+
+After an asynchronous function is invoked it runs 'in the background' while the remaining script continues to execute, and returns its output (if any) once it has finished executing. As such, to test an asynchronous event we need to make sure that the test itself waits for the asynchronous function to complete before assessing anything affected by its output.
+
+We have a special method for this: ```waitFor```.
+
+we use ```waitFor``` in conjunction with ```await``` to produce an asynchronous ```expect``` instance. We apply a matcher to the expect method in the normal way. 
+
+That's a clunky sentence! The example below may make it clearer.
+
+### <font color="2d93ad">Component:</font>
+
+```
+const Counter = () => {
+  const [counter, setCounter] = React.useState(0)
+
+  const delayCount = () => (                                     <This function contains a setTimeout method, 
+    setTimeout(() => {                                            which executes a passed function (1st parameter)
+      setCounter(counter + 1)                                     after a specified timespan in milliseconds (2nd parameter).
+    }, 500)
+  )
+  
+return (
+  <>
+    <button data-testid="counter-button" onClick={delayCount}>Press to count!</button>      < Becasue of setTimeout the button takes 500ms to increment counter.
+    <h1 data-testid="counter-display">Current value: { counter }</h1>
+ </>
+    )
+  }
+```
+
+### <font color="4e4c67">Test:</font>
+
+import { render, cleanup, fireEvent, waitFor } from '@testing-library/react';
+
+ 
+  it('increments counter after 0.5s', async () => {
+    const { getByTestId, getByText } = render(<Counter />); 
+
+    fireEvent.click(getByTestId('counter-button'))                        < The counter button 'is clicked' using fireEvent.
+
+    const counter = await waitFor(() => getByText('1'))                   < We use getByText to verify the presence of a counted number like before, 
+                                                                             but we put this in an async waitFor method, which retries the function it contains until it returns true.
+                                                                             waitFor has a default timeout of 1s.
+
+    expect(counter).toHaveTextContent('1')                                < Thanks to counter being async, .toHaveTextContent will only run 
+                                                                            after expect(counter) has executed (returned a value using getByText ('1')) or timed out.
+  });
+
+
+
+
+This document contains some additonal information on asynchronous testing tools: https://testing-library.com/docs/dom-testing-library/api-async
+
+---
+
+
+
+## Resources
+
+Using these resources will help you design your tests.
+
+- ```expect``` commands: https://jestjs.io/docs/en/expect.html
 
