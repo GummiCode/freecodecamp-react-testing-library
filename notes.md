@@ -317,34 +317,34 @@ return (
 
 ### <font color="4e4c67">Test:</font>
 
-import { render, cleanup, fireEvent, waitFor } from '@testing-library/react';
+```
+import { render, fireEvent, waitFor } from '@testing-library/react';
 
- 
-  it('increments counter after 0.5s', async () => {
-    const { getByTestId, getByText } = render(<Counter />); 
+it('increments counter after 0.5s', async () => {
+  const { getByTestId, getByText } = render(<Counter />); 
 
-    fireEvent.click(getByTestId('counter-button'))                        < The counter button 'is clicked' using fireEvent.
+  fireEvent.click(getByTestId('counter-button'))                        < The counter button 'is clicked' using fireEvent.
 
-    const counter = await waitFor(() => getByText('1'))                   < We use getByText to verify the presence of a counted number like before, 
-                                                                             but we put this in an async waitFor method, which retries the function it contains until it returns true.
-                                                                             waitFor has a default timeout of 1s.
+  const counter = await waitFor(() => getByText('1'))                   < We use getByText to verify the presence of a counted number like before, 
+                                                                           but we put this in an async waitFor method, which retries the function it contains until it returns true.
+                                                                           waitFor has a default timeout of 1s.
 
-    expect(counter).toHaveTextContent('1')                                < Thanks to counter being async, .toHaveTextContent will only run 
-                                                                            after expect(counter) has executed (returned a value using getByText ('1')) or timed out.
-  });
-
-
-
+  expect(counter).toHaveTextContent('1')                                < Thanks to counter being async, .toHaveTextContent will only run 
+  });                                                                     after expect(counter) has executed (returned a value using getByText ('1')) or timed out.
+```
 
 This document contains some additonal information on asynchronous testing tools: https://testing-library.com/docs/dom-testing-library/api-async
 
 ---
 
+## The next section will be on testing HTTP requests. Coming soon! ^__^ <3
 
+---
 
 ## Resources
 
 Using these resources will help you design your tests.
 
 - ```expect``` commands: https://jestjs.io/docs/en/expect.html
+- Async testing tools: https://testing-library.com/docs/dom-testing-library/api-async
 
